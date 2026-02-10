@@ -218,7 +218,7 @@ def robustness_under_drift(models, X_test, y_test):
         This plot shows how the accuracy or detection rate changes as drift intensity increases, highlighting models that maintain stability versus those that fail quickly.
         """
     )
-    st.pyplot(plot_degradation(results))
+    st.pyplot(plot_degradation(results), use_container_width=False)
 
     # explain operational cost
     st.subheader("Operational Cost Under Drift")
@@ -230,7 +230,7 @@ def robustness_under_drift(models, X_test, y_test):
         This graph estimates the operational cost under drift, helping identify models that minimize risk even under challenging conditions.
         """
     )
-    st.pyplot(plot_cost(results))
+    st.pyplot(plot_cost(results), use_container_width=False)
 
     # explain robustness ranking
     st.subheader("Robustness Ranking (Lower = Better)")
