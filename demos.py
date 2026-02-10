@@ -47,32 +47,29 @@ def model_comparison(models, X_test, y_test, le):
     tabs = st.tabs(models.keys())
     for name, tab in zip(models.keys(), tabs):
         with tab:
-            # compute confusion matrix
+            st.write(f"**{name} Confusion Matrix**")
             cm = confusion_matrix(y_test, models[name].predict(X_test))
 
-            # create small heatmap plot
-            fig, ax = plt.subplots(figsize=(2, 2), dpi=100)  # smaller figure or higher dpi
+            # create small heatmap
+            fig, ax = plt.subplots(figsize=(3, 3))  # small square figure
             sns.heatmap(
                 cm,
-                annot=True,            # display numbers
-                fmt="d",               # integer format
+                annot=True,
+                fmt="d",
                 cmap="Blues",
-                cbar=False,            # remove colorbar to save space
-                annot_kws={"size": 6}, # smaller font for numbers
+                cbar=False,
                 xticklabels=le.classes_,
                 yticklabels=le.classes_,
-                linewidths=0.5,        # add thin lines between cells
-                linecolor='gray'       # line color for clarity
+                annot_kws={"size": 8}  # reduce number font size
             )
 
-            # reduce padding around labels
-            plt.xticks(rotation=45, ha="right", fontsize=6)
-            plt.yticks(rotation=0, fontsize=6)
+            # reduce axis label size
+            ax.set_xlabel("Predicted", fontsize=9)
+            ax.set_ylabel("Actual", fontsize=9)
 
-            # tighten layout so nothing is cut off
+            # reduce padding
             plt.tight_layout()
 
-            # render plot in streamlit
             st.pyplot(fig)
 
 
