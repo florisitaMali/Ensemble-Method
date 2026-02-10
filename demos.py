@@ -68,7 +68,6 @@ def model_comparison(models, X_test, y_test, le):
 
 
 # ------------------ TRICKY PACKETS ------------------
-
 def tricky_packets(models, X_test, y_test):
     # display section title
     st.header("Tricky Packets Demo")
@@ -94,9 +93,22 @@ def tricky_packets(models, X_test, y_test):
             row[name] = model.predict(X_mod[i].reshape(1, -1))[0]
         rows.append(row)
 
-    # display comparison table
+    # create dataframe
     df = pd.DataFrame(rows)
-    st.dataframe(df)
+
+    # function to color cells
+    def color_preds(val, true_val):
+        if val == true_val:
+            return 'background-color: #b6fcd5'  # green for correct
+        else:
+            return 'background-color: #fcb6b6'  # red for incorrect
+
+    # apply coloring
+    styled_df = df.style.apply(lambda row: [color_preds(v, row['True']) for v in row], axis=1)
+
+    # display comparison table
+    st.dataframe(styled_df)
+
 
 
 # ------------------ NOISE STRESS TEST ------------------
@@ -196,7 +208,7 @@ def robustness_under_drift(models, X_test, y_test):
     best_model = ranking_df.iloc[0]["Model"]
 
     # display final conclusion
-    st.success(best_model, "shows the highest robustness, exhibiting the smallest performance degradation and lowest operational risk under drift.")
+    st.success(f"{best_model} shows the highest robustness, exhibiting the smallest performance degradation and lowest operational risk under drift.")
 
     # provide conceptual insight
     st.markdown(
