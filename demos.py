@@ -61,9 +61,18 @@ def model_comparison(models, X_test, y_test, le):
 
 
 # ------------------ TRICKY PACKETS ------------------
+# ------------------ TRICKY PACKETS DEMO ------------------
 def tricky_packets(models, X_test, y_test):
     # display section title
     st.header("Tricky Packets Demo")
+
+    st.markdown(
+        """
+        **Purpose:**  
+        This demo shows how models behave on borderline or tricky packets—inputs that are slightly modified to be hard to classify.  
+        It highlights which models are robust to subtle changes and which make mistakes on uncertain samples.
+        """
+    )
 
     # allow user to select number of packets
     n = st.slider("Number of tricky packets", 1, 10, 5)
@@ -103,12 +112,19 @@ def tricky_packets(models, X_test, y_test):
     st.dataframe(styled_df)
 
 
-
 # ------------------ NOISE STRESS TEST ------------------
-
 def noise_stress(models, X_test, y_test):
     # display section title
     st.header("Noise Stress Test")
+
+    st.markdown(
+        """
+        **Purpose:**  
+        Real-world inputs can be noisy or slightly corrupted.  
+        This test evaluates how each model's accuracy degrades as noise intensity increases.  
+        Models that maintain higher accuracy under noise are considered more robust to data imperfections.
+        """
+    )
 
     # predefined noise intensity levels
     noise_levels = [0, 0.1, 0.2, 0.3, 0.5]
@@ -128,13 +144,28 @@ def noise_stress(models, X_test, y_test):
 
     # plot accuracy degradation curve
     st.line_chart(pd.DataFrame(results, index=noise_levels))
+    st.markdown(
+        """
+        **Interpretation:**  
+        Curves that remain high indicate models that are resilient to noisy inputs.  
+        Steeper drops indicate sensitivity to small perturbations, which could be risky in operational environments.
+        """
+    )
 
 
 # ------------------ MINORITY ATTACK FOCUS ------------------
-
 def minority_attack_focus(models, X_test, y_test, attack_class=1):
     # display section title
     st.header("Minority Attack Detection")
+
+    st.markdown(
+        f"""
+        **Purpose:**  
+        In intrusion detection, some attack types occur less frequently (minority classes).  
+        This analysis evaluates how well each model detects the minority attack class `{attack_class}`.  
+        High detection rates for rare attacks are crucial for security-sensitive applications.
+        """
+    )
 
     # evaluate detection rate for minority attack class
     for name, model in models.items():
@@ -181,34 +212,57 @@ def robustness_under_drift(models, X_test, y_test):
 
     # run robustness experiment
     with st.spinner("Running robustness experiment..."):
-        results = robustness_experiment( models=models, X_test=X_test, y_test=y_test, drift_levels=drift_levels)
+        results = robustness_experiment(models=models, X_test=X_test, y_test=y_test, drift_levels=drift_levels)
 
-    # plot performance degradation
+    # explain performance degradation
     st.subheader("Performance Degradation")
+    st.markdown(
+        """
+        **Why this matters:**  
+        Models trained on historical data may face degraded performance when input features shift (data drift).  
+        This plot shows how the accuracy or detection rate changes as drift intensity increases, highlighting models that maintain stability versus those that fail quickly.
+        """
+    )
     st.pyplot(plot_degradation(results))
 
-    # plot operational cost under drift
+    # explain operational cost
     st.subheader("Operational Cost Under Drift")
+    st.markdown(
+        """
+        **Why this matters:**  
+        Beyond accuracy, misclassifications have real-world consequences.  
+        False negatives (missed detections) can be costly in intrusion detection.  
+        This graph estimates the operational cost under drift, helping identify models that minimize risk even under challenging conditions.
+        """
+    )
     st.pyplot(plot_cost(results))
 
-    # compute robustness ranking
-    ranking_df = robustness_ranking(results)
-
+    # explain robustness ranking
     st.subheader("Robustness Ranking (Lower = Better)")
+    st.markdown(
+        """
+        **Why this matters:**  
+        Combining multiple metrics into a robustness ranking helps compare models holistically.  
+        A lower ranking means the model performs consistently well across drift levels, maintaining low error and low operational cost.
+        """
+    )
+    ranking_df = robustness_ranking(results)
     st.dataframe(ranking_df)
 
     # identify most robust model
     best_model = ranking_df.iloc[0]["Model"]
 
     # display final conclusion
-    st.success(f"{best_model} shows the highest robustness, exhibiting the smallest performance degradation and lowest operational risk under drift.")
+    st.success(
+        f"{best_model} shows the highest robustness, exhibiting the smallest performance degradation and lowest operational risk under drift."
+    )
 
     # provide conceptual insight
     st.markdown(
         """
         ### Key Insight
-        - Models with high diversity degrade more gracefully
-        - Boosting-based methods achieve high accuracy on clean data but are less stable
-        - Bagging-based ensembles are more reliable for real-world intrusion detection
+        - Models with high diversity degrade more gracefully (less correlated errors)
+        - Boosting-based methods achieve high accuracy on clean data but are less stable under drift
+        - Bagging-based ensembles are more reliable for real-world intrusion detection because they are less sensitive to small changes
         """
     )
