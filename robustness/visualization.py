@@ -2,28 +2,34 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def plot_degradation(results):
-    plt.figure()
+    fig, ax = plt.subplots(figsize=(7, 4)) 
+
     for model, records in results.items():
         df = pd.DataFrame(records)
-        plt.plot(df["Drift"], df["Accuracy"], label=model)
+        ax.plot(df["Drift"], df["Accuracy"], marker="o", label=model)
 
-    plt.xlabel("Drift Intensity")
-    plt.ylabel("Accuracy")
-    plt.title("Performance Degradation Under Feature Drift")
-    plt.legend()
-    plt.grid(True)
-    return plt
+    ax.set_xlabel("Drift Intensity")
+    ax.set_ylabel("Accuracy")
+    ax.set_title("Performance Degradation Under Feature Drift")
+    ax.legend(fontsize=8)
+    ax.grid(True)
+
+    plt.tight_layout()
+    return fig
 
 
 def plot_cost(results):
-    plt.figure()
+    fig, ax = plt.subplots(figsize=(7, 4)) 
+
     for model, records in results.items():
         df = pd.DataFrame(records)
-        plt.plot(df["Drift"], df["Total Cost"], label=model)
+        ax.plot(df["Drift"], df["Total Cost"], marker="o", label=model)
 
-    plt.xlabel("Drift Intensity")
-    plt.ylabel("Operational Cost")
-    plt.title("Cost Escalation Under Drift")
-    plt.legend()
-    plt.grid(True)
-    return plt
+    ax.set_xlabel("Drift Intensity")
+    ax.set_ylabel("Operational Cost")
+    ax.set_title("Cost Escalation Under Drift")
+    ax.legend(fontsize=8)
+    ax.grid(True)
+
+    plt.tight_layout()
+    return fig
