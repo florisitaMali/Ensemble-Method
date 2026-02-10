@@ -51,26 +51,12 @@ def model_comparison(models, X_test, y_test, le):
             cm = confusion_matrix(y_test, models[name].predict(X_test))
 
             # create small heatmap
-            fig, ax = plt.subplots(figsize=(3, 3))  # small square figure
-            sns.heatmap(
-                cm,
-                annot=True,
-                fmt="d",
-                cmap="Blues",
-                cbar=False,
-                xticklabels=le.classes_,
-                yticklabels=le.classes_,
-                annot_kws={"size": 8}  # reduce number font size
-            )
-
-            # reduce axis label size
-            ax.set_xlabel("Predicted", fontsize=9)
-            ax.set_ylabel("Actual", fontsize=9)
-
-            # reduce padding
+            fig, ax = plt.subplots(figsize=(2, 2), dpi=100)
+            sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", cbar=False,
+                        xticklabels=le.classes_, yticklabels=le.classes_,
+                        annot_kws={"size": 8})
             plt.tight_layout()
-
-            st.pyplot(fig)
+            st.pyplot(fig, use_container_width=False)
 
 
 
