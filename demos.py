@@ -61,7 +61,6 @@ def model_comparison(models, X_test, y_test, le):
 
 
 # ------------------ TRICKY PACKETS ------------------
-# ------------------ TRICKY PACKETS DEMO ------------------
 def tricky_packets(models, X_test, y_test):
     # display section title
     st.header("Tricky Packets Demo")
@@ -182,12 +181,9 @@ def minority_attack_focus(models, X_test, y_test, attack_class=1):
 
 
 # ------------------ ROBUSTNESS ANALYSIS ------------------
-
 def robustness_under_drift(models, X_test, y_test):
-    # display section title
     st.header("Robustness Analysis Under Data Drift")
 
-    # explain purpose of experiment
     st.markdown(
         """
         This experiment evaluates how ensemble models behave when attack patterns change.
@@ -198,7 +194,6 @@ def robustness_under_drift(models, X_test, y_test):
         """
     )
 
-    # slider to control maximum drift intensity
     max_drift = st.slider(
         "Maximum Feature Drift Intensity",
         min_value=0.0,
@@ -207,67 +202,58 @@ def robustness_under_drift(models, X_test, y_test):
         step=0.05
     )
 
-    # generate drift levels
     drift_levels = np.arange(0.0, max_drift + 0.01, 0.05)
 
-    # run robustness experiment
     with st.spinner("Running robustness experiment..."):
         results = robustness_experiment(models=models, X_test=X_test, y_test=y_test, drift_levels=drift_levels)
 
-    # explain performance degradation
     st.subheader("Performance Degradation")
     st.markdown(
         """
-        Why this matters:  
+        **Why this matters:**  
         Models trained on historical data may face degraded performance when input features shift (data drift).  
         This plot shows how the accuracy or detection rate changes as drift intensity increases, highlighting models that maintain stability versus those that fail quickly.
         """
     )
 
-
-    fig, ax = plt.subplots(figsize=(4, 3), dpi=100)
-    plot_degradation(results, ax=ax)  # assuming plot_degradation can accept ax
+    # Create smaller plot for compact display
+    fig = plt.figure(figsize=(4, 3), dpi=100)
+    plot_degradation(results)  # plot_degradation should create its own plot
     plt.tight_layout()
     st.pyplot(fig, use_container_width=False)
-    
-    # explain operational cost
+
     st.subheader("Operational Cost Under Drift")
     st.markdown(
         """
-        Why this matters:  
+        **Why this matters:**  
         Beyond accuracy, misclassifications have real-world consequences.  
         False negatives (missed detections) can be costly in intrusion detection.  
         This graph estimates the operational cost under drift, helping identify models that minimize risk even under challenging conditions.
         """
     )
 
-    fig, ax = plt.subplots(figsize=(4, 3), dpi=100)
-    plot_degradation(results, ax=ax)  # assuming plot_degradation can accept ax
+    fig = plt.figure(figsize=(4, 3), dpi=100)
+    plot_cost(results)  # plot_cost should create its own plot
     plt.tight_layout()
     st.pyplot(fig, use_container_width=False)
 
-
-    # explain robustness ranking
     st.subheader("Robustness Ranking (Lower = Better)")
     st.markdown(
         """
-        Why this matters:  
+        **Why this matters:**  
         Combining multiple metrics into a robustness ranking helps compare models holistically.  
         A lower ranking means the model performs consistently well across drift levels, maintaining low error and low operational cost.
         """
     )
+
     ranking_df = robustness_ranking(results)
     st.dataframe(ranking_df)
 
-    # identify most robust model
     best_model = ranking_df.iloc[0]["Model"]
-
-    # display final conclusion
     st.success(
         f"{best_model} shows the highest robustness, exhibiting the smallest performance degradation and lowest operational risk under drift."
     )
 
-    # provide conceptual insight
     st.markdown(
         """
         ### Key Insight
