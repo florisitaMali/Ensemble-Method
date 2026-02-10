@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
+import seaborn as sns 
 import matplotlib.pyplot as plt
 import random
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
