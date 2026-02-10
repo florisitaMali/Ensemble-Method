@@ -44,27 +44,36 @@ def model_comparison(models, X_test, y_test, le):
 
     # create one tab per model
     tabs = st.tabs(models.keys())
-
     for name, tab in zip(models.keys(), tabs):
         with tab:
             # compute confusion matrix
             cm = confusion_matrix(y_test, models[name].predict(X_test))
 
             # create small heatmap plot
-            fig, ax = plt.subplots(figsize=(2, 2), dpi=80)
-            ax.matshow(cm, cmap="Blues", alpha=0.3)
+            fig, ax = plt.subplots(figsize=(2, 2), dpi=100)  # smaller figure or higher dpi
+            sns.heatmap(
+                cm,
+                annot=True,            # display numbers
+                fmt="d",               # integer format
+                cmap="Blues",
+                cbar=False,            # remove colorbar to save space
+                annot_kws={"size": 6}, # smaller font for numbers
+                xticklabels=le.classes_,
+                yticklabels=le.classes_,
+                linewidths=0.5,        # add thin lines between cells
+                linecolor='gray'       # line color for clarity
+            )
 
-            # write numbers inside the matrix cells
-            for i in range(cm.shape[0]):
-                for j in range(cm.shape[1]):
-                    ax.text(j, i, cm[i, j], ha="center", va="center", fontsize=6)
+            # reduce padding around labels
+            plt.xticks(rotation=45, ha="right", fontsize=6)
+            plt.yticks(rotation=0, fontsize=6)
 
-            # label axes using original class names
-            ax.set_xticklabels([""] + list(le.classes_), fontsize=8)
-            ax.set_yticklabels([""] + list(le.classes_), fontsize=8)
+            # tighten layout so nothing is cut off
+            plt.tight_layout()
 
             # render plot in streamlit
             st.pyplot(fig)
+
 
 
 # ------------------ TRICKY PACKETS ------------------

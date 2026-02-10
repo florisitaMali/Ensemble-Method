@@ -21,16 +21,20 @@ mode = st.sidebar.selectbox(
     "Demo Mode",
     [
         "Model Comparison",
+        "Robustness Under Drift",
         "Tricky Packets",
         "Noise Stress Test",
-        "Minority Attack Focus",
-        "Robustness Under Drift" 
+        "Minority Attack Focus"
     ]
 )
 
 # run model comparison demo
 if mode == "Model Comparison":
     demos.model_comparison(models, X_test, y_test, le)
+
+# test how models perform when data distribution changes (concept drift)
+elif mode == "Robustness Under Drift":
+    demos.robustness_under_drift(models, X_test, y_test)
 
 # analyze difficult or borderline prediction samples
 elif mode == "Tricky Packets":
@@ -44,6 +48,3 @@ elif mode == "Noise Stress Test":
 elif mode == "Minority Attack Focus":
     demos.minority_attack_focus(models, X_test, y_test)
 
-# test how models perform when data distribution changes (concept drift)
-elif mode == "Robustness Under Drift":
-    demos.robustness_under_drift(models, X_test, y_test)
