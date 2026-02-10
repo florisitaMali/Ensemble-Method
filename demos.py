@@ -65,6 +65,14 @@ def tricky_packets(models, X_test, y_test):
     # display section title
     st.header("Tricky Packets Demo")
 
+    st.markdown(
+        """
+        Purpose:  
+        This demo shows how models behave on borderline or tricky packets—inputs that are slightly modified to be hard to classify.  
+        It highlights which models are robust to subtle changes and which make mistakes on uncertain samples.
+        """
+    )
+
     # allow user to select number of packets
     n = st.slider("Number of tricky packets", 1, 10, 5)
 
@@ -110,6 +118,15 @@ def noise_stress(models, X_test, y_test):
     # display section title
     st.header("Noise Stress Test")
 
+    st.markdown(
+        """
+        Purpose:  
+        Real-world inputs can be noisy or slightly corrupted.  
+        This test evaluates how each model's accuracy degrades as noise intensity increases.  
+        Models that maintain higher accuracy under noise are considered more robust to data imperfections.
+        """
+    )
+
     # predefined noise intensity levels
     noise_levels = [0, 0.1, 0.2, 0.3, 0.5]
     results = {}
@@ -135,6 +152,15 @@ def noise_stress(models, X_test, y_test):
 def minority_attack_focus(models, X_test, y_test, attack_class=1):
     # display section title
     st.header("Minority Attack Detection")
+
+    st.markdown(
+        """
+        Purpose:  
+        Real-world inputs can be noisy or slightly corrupted.  
+        This test evaluates how each model's accuracy degrades as noise intensity increases.  
+        Models that maintain higher accuracy under noise are considered more robust to data imperfections.
+        """
+    )
 
     # evaluate detection rate for minority attack class
     for name, model in models.items():
