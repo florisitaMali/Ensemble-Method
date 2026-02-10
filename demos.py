@@ -47,7 +47,7 @@ def model_comparison(models, X_test, y_test, le):
     tabs = st.tabs(models.keys())
     for name, tab in zip(models.keys(), tabs):
         with tab:
-            st.write(f"{name} Confusion Matrix")
+            st.write(f"**{name} Confusion Matrix**")
             cm = confusion_matrix(y_test, models[name].predict(X_test))
 
             # create small heatmap
@@ -64,14 +64,6 @@ def model_comparison(models, X_test, y_test, le):
 def tricky_packets(models, X_test, y_test):
     # display section title
     st.header("Tricky Packets Demo")
-
-    st.markdown(
-        """
-        Purpose:  
-        This demo shows how models behave on borderline or tricky packets—inputs that are slightly modified to be hard to classify.  
-        It highlights which models are robust to subtle changes and which make mistakes on uncertain samples.
-        """
-    )
 
     # allow user to select number of packets
     n = st.slider("Number of tricky packets", 1, 10, 5)
@@ -111,19 +103,12 @@ def tricky_packets(models, X_test, y_test):
     st.dataframe(styled_df)
 
 
+
 # ------------------ NOISE STRESS TEST ------------------
+
 def noise_stress(models, X_test, y_test):
     # display section title
     st.header("Noise Stress Test")
-
-    st.markdown(
-        """
-        Purpose:  
-        Real-world inputs can be noisy or slightly corrupted.  
-        This test evaluates how each model's accuracy degrades as noise intensity increases.  
-        Models that maintain higher accuracy under noise are considered more robust to data imperfections.
-        """
-    )
 
     # predefined noise intensity levels
     noise_levels = [0, 0.1, 0.2, 0.3, 0.5]
@@ -143,28 +128,13 @@ def noise_stress(models, X_test, y_test):
 
     # plot accuracy degradation curve
     st.line_chart(pd.DataFrame(results, index=noise_levels))
-    st.markdown(
-        """
-        Interpretation:  
-        Curves that remain high indicate models that are resilient to noisy inputs.  
-        Steeper drops indicate sensitivity to small perturbations, which could be risky in operational environments.
-        """
-    )
 
 
 # ------------------ MINORITY ATTACK FOCUS ------------------
+
 def minority_attack_focus(models, X_test, y_test, attack_class=1):
     # display section title
     st.header("Minority Attack Detection")
-
-    st.markdown(
-        f"""
-        Purpose:  
-        In intrusion detection, some attack types occur less frequently (minority classes).  
-        This analysis evaluates how well each model detects the minority attack class `{attack_class}`.  
-        High detection rates for rare attacks are crucial for security-sensitive applications.
-        """
-    )
 
     # evaluate detection rate for minority attack class
     for name, model in models.items():
@@ -181,9 +151,12 @@ def minority_attack_focus(models, X_test, y_test, attack_class=1):
 
 
 # ------------------ ROBUSTNESS ANALYSIS ------------------
+
 def robustness_under_drift(models, X_test, y_test):
+    # display section title
     st.header("Robustness Analysis Under Data Drift")
 
+    # explain purpose of experiment
     st.markdown(
         """
         This experiment evaluates how ensemble models behave when attack patterns change.
@@ -194,6 +167,7 @@ def robustness_under_drift(models, X_test, y_test):
         """
     )
 
+    # slider to control maximum drift intensity
     max_drift = st.slider(
         "Maximum Feature Drift Intensity",
         min_value=0.0,
@@ -202,11 +176,14 @@ def robustness_under_drift(models, X_test, y_test):
         step=0.05
     )
 
+    # generate drift levels
     drift_levels = np.arange(0.0, max_drift + 0.01, 0.05)
 
+    # run robustness experiment
     with st.spinner("Running robustness experiment..."):
         results = robustness_experiment(models=models, X_test=X_test, y_test=y_test, drift_levels=drift_levels)
 
+    # explain performance degradation
     st.subheader("Performance Degradation")
     st.markdown(
         """
@@ -215,13 +192,9 @@ def robustness_under_drift(models, X_test, y_test):
         This plot shows how the accuracy or detection rate changes as drift intensity increases, highlighting models that maintain stability versus those that fail quickly.
         """
     )
+    st.pyplot(plot_degradation(results))
 
-    # Create smaller plot for compact display
-    fig = plt.figure(figsize=(4, 3), dpi=100)
-    plot_degradation(results)  # plot_degradation should create its own plot
-    plt.tight_layout()
-    st.pyplot(fig, use_container_width=False)
-
+    # explain operational cost
     st.subheader("Operational Cost Under Drift")
     st.markdown(
         """
@@ -231,12 +204,9 @@ def robustness_under_drift(models, X_test, y_test):
         This graph estimates the operational cost under drift, helping identify models that minimize risk even under challenging conditions.
         """
     )
+    st.pyplot(plot_cost(results))
 
-    fig = plt.figure(figsize=(4, 3), dpi=100)
-    plot_cost(results)  # plot_cost should create its own plot
-    plt.tight_layout()
-    st.pyplot(fig, use_container_width=False)
-
+    # explain robustness ranking
     st.subheader("Robustness Ranking (Lower = Better)")
     st.markdown(
         """
@@ -245,15 +215,18 @@ def robustness_under_drift(models, X_test, y_test):
         A lower ranking means the model performs consistently well across drift levels, maintaining low error and low operational cost.
         """
     )
-
     ranking_df = robustness_ranking(results)
     st.dataframe(ranking_df)
 
+    # identify most robust model
     best_model = ranking_df.iloc[0]["Model"]
+
+    # display final conclusion
     st.success(
         f"{best_model} shows the highest robustness, exhibiting the smallest performance degradation and lowest operational risk under drift."
     )
 
+    # provide conceptual insight
     st.markdown(
         """
         ### Key Insight
